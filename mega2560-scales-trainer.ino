@@ -18,7 +18,37 @@ E-29-45-44-42
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_ADDRESS);
 
+const String notes[] = {"E2","E1","E2","E4","E2","E4","A1","E4","A1","A2","A1","A2"};
+const char sequence[] = {'E2'};
+int currentNote = 0;
+
+void verifyNote(const String note) {
+  Serial.println(notes[currentNote]);
+  Serial.println(note);
+  if(notes[currentNote] == note) {
+    Serial.println("Right");
+    display.clearDisplay();
+    display.setCursor(0, 10);
+    display.println("RIGHT!");
+    display.display();
+    delay(1000);
+  }else {
+    Serial.println("Wrong");
+    display.clearDisplay();
+    display.setCursor(0, 10);
+    display.println(notes[currentNote]);
+    display.setCursor(25, 10);
+    display.println("!=");
+    display.setCursor(0, 30);
+    display.println(note);
+    display.display();
+    delay(1000);
+  }
+  currentNote++;
+}
+
 void displayNote(const char* note) {
+  verifyNote(note);
   display.clearDisplay();
   display.setCursor(0, 10);
   display.println(note);
@@ -143,5 +173,5 @@ void loop() {
   if (btn45State == LOW) {
     displayNote("E2");
   }
-
+  delay(500);
 }
