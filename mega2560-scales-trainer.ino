@@ -18,7 +18,7 @@ E-29-45-44-42
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_ADDRESS);
 
-const String notes[] = {"E2","E1","E2","E4","E2","E4","A1","E4","A1","A2","A1","A2"};
+const String notes[] = {"E(8)","E(7)","E(8)","E(10)","E(8)","E(10)","A(7)","E(10)","A(7)","A(8)","A(7)","A(8)"};
 const char sequence[] = {'E2'};
 int currentNote = 0;
 
@@ -31,20 +31,27 @@ void verifyNote(const String note) {
     display.setCursor(0, 10);
     display.println("RIGHT!");
     display.display();
-    delay(1000);
+
+    if(currentNote < 11) {
+      currentNote++;
+    }else {
+      currentNote = 0;
+    }
+    
+    delay(700);
   }else {
     Serial.println("Wrong");
     display.clearDisplay();
     display.setCursor(0, 10);
-    display.println(notes[currentNote]);
-    display.setCursor(25, 10);
+    display.println(note);
+    display.setCursor(55, 10);
     display.println("!=");
     display.setCursor(0, 30);
-    display.println(note);
+    display.println(notes[currentNote]);
     display.display();
-    delay(1000);
+    delay(700);
   }
-  currentNote++;
+  
 }
 
 void displayNote(const char* note) {
@@ -102,76 +109,76 @@ void loop() {
   const int btn45State = digitalRead(45);
 
   if (btn22State == LOW) {
-    displayNote("e2");
+    displayNote("e(8)");
   }
   if (btn23State == LOW) {
-    displayNote("A3");
+    displayNote("A(9)");
   }
   if (btn24State == LOW) {
-    displayNote("e3");
+    displayNote("e(9)");
   }
   if (btn25State == LOW) {
-    displayNote("G4");
+    displayNote("G(10)");
   }
   if (btn26State == LOW) {
-    displayNote("A4");
+    displayNote("A(10)");
   }
   if (btn27State == LOW) {
-    displayNote("G2");
+    displayNote("G(8)");
   }
   if (btn28State == LOW) {
-    displayNote("B4");
+    displayNote("B(10)");
   }
   if (btn29State == LOW) {
-    displayNote("E1");
+    displayNote("E(7)");
   }
   if (btn30State == LOW) {
-    displayNote("B2");
+    displayNote("B(8)");
   }
   if (btn31State == LOW) {
-    displayNote("D1");
+    displayNote("D(7)");
   }
   if (btn32State == LOW) {
-    displayNote("G3");
+    displayNote("G(9)");
   }
   if (btn33State == LOW) {
-    displayNote("G1");
+    displayNote("G(7)");
   }
   if (btn34State == LOW) {
-    displayNote("D3");
+    displayNote("D(9)");
   }
   if (btn35State == LOW) {
-    displayNote("D2");
+    displayNote("D(8)");
   }
   if (btn36State == LOW) {
-    displayNote("D4");
+    displayNote("D(10)");
   }
   if (btn37State == LOW) {
-    displayNote("A2");
+    displayNote("A(8)");
   }
   if (btn38State == LOW) {
-    displayNote("e1");
+    displayNote("e(7)");
   }
   if (btn39State == LOW) {
-    displayNote("B3");
+    displayNote("B(9)");
   }
   if (btn40State == LOW) {
-    displayNote("A1");
+    displayNote("A(7)");
   }
   if (btn41State == LOW) {
-    displayNote("B1");
+    displayNote("B(7)");
   }
   if (btn42State == LOW) {
-    displayNote("E4");
+    displayNote("E(10)");
   }
   if (btn43State == LOW) {
-    displayNote("e4");
+    displayNote("e(10)");
   }
   if (btn44State == LOW) {
-    displayNote("E3");
+    displayNote("E(9)");
   }
   if (btn45State == LOW) {
-    displayNote("E2");
+    displayNote("E(8)");
   }
   delay(500);
 }
