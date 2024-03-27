@@ -18,14 +18,20 @@ E-29-45-44-42
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_ADDRESS);
 
-const String notes[] = {"E(8)","E(7)","E(8)","E(10)","E(8)","E(10)","A(7)","E(10)","A(7)","A(8)","A(7)","A(8)"};
+const String notes[4][15] = {
+  {"E(8)","E(7)","E(8)","E(10)","E(8)","E(10)","A(7)","E(10)","A(7)","A(8)","A(7)","A(8)"},
+  {"A(10)","A(8)","A(10)","D(7)","A(10)","D(7)","D(9)","D(7)","D(9)","D(10)","D(9)","D(10)"},
+  {"e(8)","e(10)","e(8)","e(7)","e(8)","e(7)","B(10)","e(7)","B(10)","B(8)","B(10)","B(8)"},
+  {"G(10)","B(8)","G(10)","G(9)","G(10)","G(9)","G(7)","G(9)","G(7)","D(10)","G(7)","D(10)"},
+  };
 const char sequence[] = {'E2'};
 int currentNote = 0;
+int currentRow = 0;
 
 void verifyNote(const String note) {
-  Serial.println(notes[currentNote]);
+  Serial.println(notes[currentRow][currentNote]);
   Serial.println(note);
-  if(notes[currentNote] == note) {
+  if(notes[currentRow][currentNote] == note) {
     Serial.println("Right");
     display.clearDisplay();
     display.setCursor(0, 10);
@@ -34,8 +40,12 @@ void verifyNote(const String note) {
 
     if(currentNote < 11) {
       currentNote++;
-    }else {
+    }else if(currentNote == 11 && currentRow < 4){
       currentNote = 0;
+      currentRow++;
+    }else if(currentNote == 11 && currentRow == 4) {
+      currentNote = 0;
+      currentRow = 0;
     }
     
     delay(700);
@@ -47,7 +57,7 @@ void verifyNote(const String note) {
     display.setCursor(55, 10);
     display.println("!=");
     display.setCursor(0, 30);
-    display.println(notes[currentNote]);
+    display.println(notes[currentRow][currentNote]);
     display.display();
     delay(700);
   }
