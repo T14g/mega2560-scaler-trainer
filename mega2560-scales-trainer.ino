@@ -40,10 +40,10 @@ void verifyNote(const String note) {
 
     if(currentNote < 11) {
       currentNote++;
-    }else if(currentNote == 11 && currentRow < 4){
+    }else if(currentNote == 11 && currentRow < 3){
       currentNote = 0;
       currentRow++;
-    }else if(currentNote == 11 && currentRow == 4) {
+    }else if(currentNote == 11 && currentRow == 3) {
       currentNote = 0;
       currentRow = 0;
     }
