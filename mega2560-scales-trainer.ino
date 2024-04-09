@@ -18,34 +18,68 @@ E-29-45-44-42
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_ADDRESS);
 
-const String notes[4][15] = {
-  {"E(8)","E(7)","E(8)","E(10)","E(8)","E(10)","A(7)","E(10)","A(7)","A(8)","A(7)","A(8)"},
-  {"A(10)","A(8)","A(10)","D(7)","A(10)","D(7)","D(9)","D(7)","D(9)","D(10)","D(9)","D(10)"},
-  {"e(8)","e(10)","e(8)","e(7)","e(8)","e(7)","B(10)","e(7)","B(10)","B(8)","B(10)","B(8)"},
-  {"G(10)","B(8)","G(10)","G(9)","G(10)","G(9)","G(7)","G(9)","G(7)","D(10)","G(7)","D(10)"},
+const String notes[3][4][12] = {
+  {
+    {"E(8)","E(10)","A(7)","A(8)","E(10)","A(7)","A(8)","A(10)","","","",""},
+    {"A(7)","A(8)","A(10)","D(7)","A(8)","A(10)","D(7)","D(9)","","","",""},
+    {"e(10)","e(8)","e(7)","B(10)","e(8)","e(7)","B(10)","B(8)","","","",""},
+    {"e(7)","B(10)","B(8)","G(10)","B(10)","B(8)","G(10)","G(9)","","","",""},
+  },
+  {
+    {"E(8)","E(10)","A(7)","E(8)","E(10)","A(7)","A(8)","A(10)","","","",""},
+    {"A(7)","A(8)","A(10)","A(7)","A(8)","A(10)","D(7)","A(8)","","","",""},
+    {"e(10)","e(8)","e(7)","e(10)","e(8)","e(7)","B(10)","e(8)","","","",""},
+    {"e(7)","B(10)","B(8)","e(7)","B(10)","B(8)","G(10)","B(10)","","","",""},
+  },
+    {
+    {"E(8)","E(7)","E(8)","E(10)","E(8)","E(10)","A(7)","E(10)","A(7)","A(8)","A(7)","A(8)"},
+    {"A(10)","A(8)","A(10)","D(7)","A(10)","D(7)","D(9)","D(7)","D(9)","D(10)","D(9)","D(10)"},
+    {"e(8)","e(10)","e(8)","e(7)","e(8)","e(7)","B(10)","e(7)","B(10)","B(8)","B(10)","B(8)"},
+    {"G(10)","B(8)","G(10)","G(9)","G(10)","G(9)","G(7)","G(9)","G(7)","D(10)","G(7)","D(10)"}
+  },
+
   };
-const char sequence[] = {'E2'};
+
+bool choseMode = false;
+int currentMode = 0;
 int currentNote = 0;
 int currentRow = 0;
+int lastNoteIndex;
+
+void initSystem() {
+  display.clearDisplay();
+  display.setTextColor(1);
+  display.setTextSize(2);
+  display.setCursor(0, 10);
+  display.println("Pick a mode");
+  display.display();
+}
 
 void verifyNote(const String note) {
-  Serial.println(notes[currentRow][currentNote]);
-  Serial.println(note);
-  if(notes[currentRow][currentNote] == note) {
+  // Serial.println(notes[currentMode][currentRow][currentNote]);
+  // Serial.println(note);
+  
+  if(notes[currentMode][currentRow][currentNote] == note) {
     Serial.println("Right");
     display.clearDisplay();
     display.setCursor(0, 10);
     display.println("RIGHT!");
     display.display();
-
-    if(currentNote < 11) {
-      currentNote++;
-    }else if(currentNote == 11 && currentRow < 3){
+    // lastNoteIndex = (sizeof(notes[0][0])/sizeof(notes[0][0]));
+    // Serial.println(lastNoteIndex);
+    // Serial.println(notes[currentMode][currentRow][lastNoteIndex]);
+    // Serial.println("Mode: " + String(currentMode) + " Row: " + String(currentRow) + " Index: " + String(lastNoteIndex) + " | Note: " + String(currentNote));
+    if(currentNote == 11 && currentRow < 3 || notes[currentMode][currentRow][currentNote] == "" && currentRow < 3){
       currentNote = 0;
       currentRow++;
+      Serial.println("Reset not increase row");
     }else if(currentNote == 11 && currentRow == 3) {
+      Serial.println("Reset all");
       currentNote = 0;
       currentRow = 0;
+    }else {
+      currentNote++;
+      Serial.println("Note increment");
     }
     
     delay(700);
@@ -57,7 +91,7 @@ void verifyNote(const String note) {
     display.setCursor(55, 10);
     display.println("!=");
     display.setCursor(0, 30);
-    display.println(notes[currentRow][currentNote]);
+    display.println(notes[currentMode][currentRow][currentNote]);
     display.display();
     delay(700);
   }
@@ -65,11 +99,19 @@ void verifyNote(const String note) {
 }
 
 void displayNote(const char* note) {
-  verifyNote(note);
-  display.clearDisplay();
-  display.setCursor(0, 10);
-  display.println(note);
-  display.display();
+  if(choseMode) {
+    verifyNote(note);
+    display.clearDisplay();
+    display.setCursor(0, 10);
+    display.println(note);
+    display.display();
+  }else {
+    verifyNote(note);
+    display.clearDisplay();
+    display.setCursor(0, 10);
+    display.println("Guitar Scales");
+    display.display();
+  }
 }
 
 void setup() {
@@ -84,12 +126,7 @@ void setup() {
     for(;;);
   }
 
-  display.clearDisplay();
-  display.setTextColor(1);
-  display.setTextSize(2);
-  display.setCursor(0, 10);
-  display.println("Guitar Scales");
-  display.display();
+  initSystem();
 }
 
 void loop() {
@@ -118,6 +155,7 @@ void loop() {
   const int btn44State = digitalRead(44);
   const int btn45State = digitalRead(45);
 
+
   if (btn22State == LOW) {
     displayNote("e(8)");
   }
@@ -140,7 +178,12 @@ void loop() {
     displayNote("B(10)");
   }
   if (btn29State == LOW) {
-    displayNote("E(7)");
+    if(!choseMode) {
+      currentMode = 0;
+      choseMode = true;
+    } else {
+      displayNote("E(7)");
+    }  
   }
   if (btn30State == LOW) {
     displayNote("B(8)");
@@ -185,10 +228,20 @@ void loop() {
     displayNote("e(10)");
   }
   if (btn44State == LOW) {
-    displayNote("E(9)");
+    if(!choseMode) {
+      currentMode = 2;
+      choseMode = true;
+    } else {
+      displayNote("E(9)");
+    } 
   }
   if (btn45State == LOW) {
-    displayNote("E(8)");
+    if(!choseMode) {
+      currentMode = 1;
+      choseMode = true;
+    } else {
+       displayNote("E(8)");
+    } 
   }
   delay(500);
 }
