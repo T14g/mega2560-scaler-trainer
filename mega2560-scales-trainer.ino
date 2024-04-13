@@ -20,16 +20,16 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_ADDRESS);
 
 const String notes[3][4][12] = {
   {
-    {"E(8)","E(10)","A(7)","A(8)","E(10)","A(7)","A(8)","A(10)","","","",""},
-    {"A(7)","A(8)","A(10)","D(7)","A(8)","A(10)","D(7)","D(9)","","","",""},
-    {"e(10)","e(8)","e(7)","B(10)","e(8)","e(7)","B(10)","B(8)","","","",""},
-    {"e(7)","B(10)","B(8)","G(10)","B(10)","B(8)","G(10)","G(9)","","","",""},
+    {"E(8)","E(10)","A(7)","A(8)","E(10)","A(7)","A(8)","A(10)"},
+    {"A(7)","A(8)","A(10)","D(7)","A(8)","A(10)","D(7)","D(9)"},
+    {"e(10)","e(8)","e(7)","B(10)","e(8)","e(7)","B(10)","B(8)"},
+    {"e(7)","B(10)","B(8)","G(10)","B(10)","B(8)","G(10)","G(9)"},
   },
   {
-    {"E(8)","E(10)","A(7)","E(8)","E(10)","A(7)","A(8)","A(10)","","","",""},
-    {"A(7)","A(8)","A(10)","A(7)","A(8)","A(10)","D(7)","A(8)","","","",""},
-    {"e(10)","e(8)","e(7)","e(10)","e(8)","e(7)","B(10)","e(8)","","","",""},
-    {"e(7)","B(10)","B(8)","e(7)","B(10)","B(8)","G(10)","B(10)","","","",""},
+    {"E(8)","E(10)","A(7)","E(8)","E(10)","A(7)","A(8)","A(10)"},
+    {"A(7)","A(8)","A(10)","A(7)","A(8)","A(10)","D(7)","A(8)"},
+    {"e(10)","e(8)","e(7)","e(10)","e(8)","e(7)","B(10)","e(8)"},
+    {"e(7)","B(10)","B(8)","e(7)","B(10)","B(8)","G(10)","B(10)"},
   },
     {
     {"E(8)","E(7)","E(8)","E(10)","E(8)","E(10)","A(7)","E(10)","A(7)","A(8)","A(7)","A(8)"},
@@ -45,6 +45,7 @@ int currentMode = 0;
 int currentNote = 0;
 int currentRow = 0;
 int lastNoteIndex;
+int numberOfNotes;
 
 void initSystem() {
   display.clearDisplay();
@@ -69,11 +70,11 @@ void verifyNote(const String note) {
     // Serial.println(lastNoteIndex);
     // Serial.println(notes[currentMode][currentRow][lastNoteIndex]);
     // Serial.println("Mode: " + String(currentMode) + " Row: " + String(currentRow) + " Index: " + String(lastNoteIndex) + " | Note: " + String(currentNote));
-    if(currentNote == 11 && currentRow < 3 || notes[currentMode][currentRow][currentNote] == "" && currentRow < 3){
+    if(currentNote == (numberOfNotes - 1) && currentRow < 3 && currentRow < 3){
       currentNote = 0;
       currentRow++;
       Serial.println("Reset not increase row");
-    }else if(currentNote == 11 && currentRow == 3) {
+    }else if(currentNote == (numberOfNotes - 1) && currentRow == 3) {
       Serial.println("Reset all");
       currentNote = 0;
       currentRow = 0;
@@ -180,6 +181,7 @@ void loop() {
   if (btn29State == LOW) {
     if(!choseMode) {
       currentMode = 0;
+      numberOfNotes = 8;
       choseMode = true;
     } else {
       displayNote("E(7)");
@@ -230,6 +232,7 @@ void loop() {
   if (btn44State == LOW) {
     if(!choseMode) {
       currentMode = 2;
+      numberOfNotes = 12;
       choseMode = true;
     } else {
       displayNote("E(9)");
@@ -238,6 +241,7 @@ void loop() {
   if (btn45State == LOW) {
     if(!choseMode) {
       currentMode = 1;
+      numberOfNotes = 8;
       choseMode = true;
     } else {
        displayNote("E(8)");
